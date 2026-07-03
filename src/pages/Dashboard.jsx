@@ -5,6 +5,7 @@ import SummaryCard from "../components/dashboard/SummaryCard";
 import ExpenseCategoryChart from "../components/dashboard/ExpenseCategoryChart";
 import ExpenseTable from "../components/expenses/ExpenseTable";
 import ExpenseModal from "../components/expenses/ExpenseModal";
+import { useAuth } from "../context/AuthContext";
 
 import {
     getSummary,
@@ -20,6 +21,7 @@ export default function Dashboard() {
     const [selectedExpense, setSelectedExpense] = useState(null);
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
+    const token = localStorage.getItem("token");
 
     const loadDashboard = async () => {
         try {
@@ -39,6 +41,8 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
+        if (!token) return;
+
         loadDashboard();
     }, []);
 
