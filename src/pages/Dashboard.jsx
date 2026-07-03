@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Layout from "../components/layout/Layout";
 import SummaryCard from "../components/dashboard/SummaryCard";
 import ExpenseCategoryChart from "../components/dashboard/ExpenseCategoryChart";
 import ExpenseTable from "../components/expenses/ExpenseTable";
@@ -71,7 +70,7 @@ export default function Dashboard() {
     });
 
     return (
-        <Layout>
+        <>
             <div className="flex justify-between items-center mb-8">
 
                 <h1 className="text-3xl font-bold">
@@ -103,36 +102,41 @@ export default function Dashboard() {
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
 
                 <SummaryCard
                     title="Total Gastado"
                     value={`$${total}`}
-                    color="bg-red-500"
+                    color="border-red-500"
                 />
 
                 <SummaryCard
                     title="Número de gastos"
                     value={expenses.length}
-                    color="bg-blue-500"
+                    color="border-blue-500"
                 />
 
                 <SummaryCard
                     title="Categorías"
                     value={categories.length}
-                    color="bg-green-500"
+                    color="border-green-500"
                 />
 
             </div>
 
             {/* CHART */}
-            <ExpenseCategoryChart categories={categories} />
+            <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+                <ExpenseCategoryChart categories={categories} />
+            </div>
 
             {/* TABLE */}
-            <ExpenseTable
-                expenses={filteredExpenses}
-                onEdit={handleEdit}
-            />
+            <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+                <ExpenseTable
+                    expenses={filteredExpenses}
+                    onEdit={handleEdit}
+                    onDeleted={loadDashboard}
+                />
+            </div>
 
             {/* MODAL */}
             <ExpenseModal
@@ -141,6 +145,6 @@ export default function Dashboard() {
                 onUpdated={handleUpdated}
             />
 
-        </Layout>
+        </>
     );
 }

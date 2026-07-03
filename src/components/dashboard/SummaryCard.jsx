@@ -1,22 +1,24 @@
 export default function SummaryCard({
-    title,
-    value,
-    color = "bg-blue-600"
+  title,
+  value,
+  color = "border-blue-500",
+  subtitle = "Actualizado hoy",
 }) {
+  return (
+    <div
+      className={`rounded-xl border-t-4 ${color} bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+    >
+      <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
+        {title}
+      </p>
 
-    return (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      <h2 className="mt-3 text-3xl font-bold text-slate-800">
+        {value}
+      </h2>
 
-            <h3 className="text-gray-500 text-sm">
-                {title}
-            </h3>
-
-            <div
-                className={`mt-4 inline-flex rounded-full px-3 py-1 text-white ${color}`}
-            >
-                {value}
-            </div>
-
-        </div>
-    );
+      <p className="mt-2 text-sm text-slate-400">
+        {subtitle}
+      </p>
+    </div>
+  );
 }

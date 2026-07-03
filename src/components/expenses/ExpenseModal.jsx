@@ -3,111 +3,179 @@ import { updateExpense } from "../../services/expenseService";
 import api from "../../api/axiosConfig";
 
 export default function ExpenseModal({ expense, onClose, onUpdated }) {
+  const [form, setForm] = useState({
+    title: "",
+    amount: "",
+    category: "",
+  });
 
-    const [form, setForm] = useState({
+  const [loading, setLoading] = useState(false);
+
+  const isEdit = Boolean(expense?.id);
+
+  useEffect(() => {
+    if (isEdit) {
+      setForm({
+        title: expense.title,
+        amount: expense.amount,
+        category: expense.category,
+      });
+    } else {
+      setForm({
         title: "",
         amount: "",
-        category: ""
-    });
+        category: "",
+      });
+    }
+  }, [expense, isEdit]);
 
-    useEffect(() => {
-        if (expense && expense.id) {
-            setForm({
-                title: expense.title,
-                amount: expense.amount,
-                category: expense.category
-            });
-        } else {
-            setForm({
-                title: "",
-                amount: "",
-                category: ""
-            });
-        }
-    }, [expense]);
-
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (isEdit) {
-            await updateExpense(expense.id, form);
-        } else {
-            await api.post("/expenses", form);
-        }
-
-        onUpdated();
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
         onClose();
+      }
     };
 
-    const isEdit = expense && expense.id;
-    if (expense === null) return null;
+    window.addEventListener("keydown", handleEscape);
 
-    return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
 
-            <div className="bg-white p-6 rounded-xl w-96">
+  const handleChange = ({ target }) => {
+    setForm((prev) => ({
+      ...prev,
+      [target.name]: target.value,
+    }));
+  };
 
-                <h2 className="text-xl font-bold mb-4">
-                    {isEdit ? "Editar gasto" : "Nuevo gasto"}
-                </h2>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+    if (!form.title.trim()) {
+      alert("Ingrese un título.");
+      return;
+    }
 
-                    <input
-                        name="title"
-                        value={form.title}
-                        onChange={handleChange}
-                        placeholder="Título"
-                        className="w-full border p-2 rounded"
-                    />
+    if (!form.category.trim()) {
+      alert("Ingrese una categoría.");
+      return;
+    }
 
-                    <input
-                        name="amount"
-                        type="number"
-                        value={form.amount}
-                        onChange={handleChange}
-                        placeholder="Monto"
-                        className="w-full border p-2 rounded"
-                    />
+    if (Number(form.amount) <= 0) {
+      alert("El monto debe ser mayor que cero.");
+      return;
+    }
 
-                    <input
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                        placeholder="Categoría"
-                        className="w-full border p-2 rounded"
-                    />
+    try {
+      setLoading(true);
 
-                    <div className="flex justify-end gap-2">
+      if (isEdit) {
+        await updateExpense(expense.id, form);
+      } else {
+        await api.post("/expenses", form);
+      }
 
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 bg-gray-300 rounded"
-                        >
-                            Cancelar
-                        </button>
+      onUpdated();
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("No fue posible guardar el gasto.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded"
-                        >
-                            Guardar
-                        </button>
+  if (expense === null) return null;
 
-                    </div>
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="mb-6 text-2xl font-bold text-slate-800">
+          {isEdit ? "Editar gasto" : "Nuevo gasto"}
+        </h2>
 
-                </form>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">
+              Título
+            </label>
 
-            </div>
+            <input
+              autoFocus
+              required
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="Ej. Compra supermercado"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
 
-        </div>
-    );
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">
+              Monto
+            </label>
+
+            <input
+              required
+              name="amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={form.amount}
+              onChange={handleChange}
+              placeholder="0.00"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">
+              Categoría
+            </label>
+
+            <input
+              required
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              placeholder="Ej. Alimentación"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="rounded-lg bg-slate-200 px-4 py-2 transition hover:bg-slate-300 disabled:cursor-not-allowed"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="rounded-lg bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+            >
+              {loading
+                ? "Guardando..."
+                : isEdit
+                ? "Actualizar"
+                : "Guardar"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
