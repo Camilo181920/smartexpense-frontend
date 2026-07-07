@@ -12,9 +12,9 @@ export default function SummaryCard({
         {title}
       </p>
 
-      <h2 className="mt-3 text-3xl font-bold text-slate-800">
+      <p className="mt-3 text-3xl font-bold text-slate-800">
         {value}
-      </h2>
+      </p>
 
       <p className="mt-2 text-sm text-slate-400">
         {subtitle}

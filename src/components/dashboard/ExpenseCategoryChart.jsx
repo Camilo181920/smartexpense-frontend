@@ -10,14 +10,15 @@ import { Pie } from "react-chartjs-2";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function ExpenseCategoryChart({ categories }) {
-  const hasData = categories.length > 0;
+
+  const hasData = categories?.length > 0;
 
   const data = {
-    labels: categories.map((item) => item[0]),
+    labels: categories?.map((item) => item[0]) ?? [],
 
     datasets: [
       {
-        data: categories.map((item) => item[1]),
+        data: categories?.map((item) => item[1]) ?? [],
 
         backgroundColor: [
           "#2563EB", // Blue
@@ -58,7 +59,10 @@ export default function ExpenseCategoryChart({ categories }) {
   };
 
   return (
-    <section className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+    <section
+      aria-label="Gastos por categoría"
+      className="mt-8 rounded-xl bg-white p-6 shadow-sm"
+    >
 
       <div className="mb-6 flex items-center justify-between">
 

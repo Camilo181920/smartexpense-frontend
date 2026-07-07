@@ -6,6 +6,8 @@ export default function ExpenseTable({
   onDeleted,
 }) {
 
+  const expenseList = expenses ?? [];
+
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
       "¿Deseas eliminar este gasto?"
@@ -48,7 +50,7 @@ export default function ExpenseTable({
         </p>
       </div>
 
-      {expenses.length === 0 ? (
+      {expenseList.length === 0 ? (
 
         <div className="flex h-52 items-center justify-center">
 
@@ -60,88 +62,92 @@ export default function ExpenseTable({
 
       ) : (
 
-        <table className="w-full">
+        <div className="overflow-x-auto">
 
-          <thead className="bg-slate-50">
+          <table className="w-full">
 
-            <tr className="text-sm uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50">
 
-              <th className="p-4 text-left">
-                Fecha
-              </th>
+              <tr className="text-sm uppercase tracking-wide text-slate-500">
 
-              <th className="p-4 text-left">
-                Descripción
-              </th>
+                <th className="p-4 text-left">
+                  Fecha
+                </th>
 
-              <th className="p-4 text-left">
-                Categoría
-              </th>
+                <th className="p-4 text-left">
+                  Descripción
+                </th>
 
-              <th className="p-4 text-right">
-                Monto
-              </th>
+                <th className="p-4 text-left">
+                  Categoría
+                </th>
 
-              <th className="p-4 text-center">
-                Acciones
-              </th>
+                <th className="p-4 text-right">
+                  Monto
+                </th>
 
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {expenses.map((expense) => (
-
-              <tr
-                key={expense.id}
-                className="border-t transition-colors hover:bg-slate-50"
-              >
-
-                <td className="p-4">
-                  {formatDate(expense.createdAt)}
-                </td>
-
-                <td className="p-4 font-medium text-slate-700">
-                  {expense.title}
-                </td>
-
-                <td className="p-4">
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-sm">
-                    {expense.category}
-                  </span>
-                </td>
-
-                <td className="p-4 text-right font-semibold text-red-600">
-                  {formatCurrency(expense.amount)}
-                </td>
-
-                <td className="space-x-2 p-4 text-center">
-
-                  <button
-                    onClick={() => onEdit(expense)}
-                    className="rounded-md bg-blue-100 px-3 py-1 text-blue-700 transition hover:bg-blue-200"
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(expense.id)}
-                    className="rounded-md bg-red-100 px-3 py-1 text-red-700 transition hover:bg-red-200"
-                  >
-                    Eliminar
-                  </button>
-
-                </td>
+                <th className="p-4 text-center">
+                  Acciones
+                </th>
 
               </tr>
 
-            ))}
+            </thead>
 
-          </tbody>
+            <tbody>
 
-        </table>
+              {expenseList.map((expense) => (
+
+                <tr
+                  key={expense.id}
+                  className="border-t transition-colors hover:bg-slate-50"
+                >
+
+                  <td className="p-4">
+                    {formatDate(expense.createdAt)}
+                  </td>
+
+                  <td className="p-4 font-medium text-slate-700">
+                    {expense.title}
+                  </td>
+
+                  <td className="p-4">
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-sm">
+                      {expense.category}
+                    </span>
+                  </td>
+
+                  <td className="p-4 text-right font-semibold text-red-600">
+                    {formatCurrency(expense.amount)}
+                  </td>
+
+                  <td className="space-x-2 p-4 text-center">
+
+                    <button
+                      onClick={() => onEdit(expense)}
+                      className="rounded-md bg-blue-100 px-3 py-1 text-blue-700 transition hover:bg-blue-200"
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(expense.id)}
+                      className="rounded-md bg-red-100 px-3 py-1 text-red-700 transition hover:bg-red-200"
+                    >
+                      Eliminar
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       )}
 

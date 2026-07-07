@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { updateExpense } from "../../services/expenseService";
-import api from "../../api/axiosConfig";
+import {
+  createExpense,
+  updateExpense
+} from "../../services/expenseService";
 
 export default function ExpenseModal({ expense, onClose, onUpdated }) {
   const [form, setForm] = useState({
@@ -72,9 +74,15 @@ export default function ExpenseModal({ expense, onClose, onUpdated }) {
       setLoading(true);
 
       if (isEdit) {
-        await updateExpense(expense.id, form);
+          await updateExpense(expense.id, {
+              ...form,
+              amount: Number(form.amount),
+          });
       } else {
-        await api.post("/expenses", form);
+          await createExpense({
+              ...form,
+              amount: Number(form.amount),
+          });
       }
 
       onUpdated();
