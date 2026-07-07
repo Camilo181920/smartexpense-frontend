@@ -1,41 +1,32 @@
 import { useState } from "react";
-import api from "../api/axiosConfig";
+import { loginRequest } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getCurrentUser } from "../services/userService";
 
 export default function Login() {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async () => {
     try {
-
-      const response = await api.post("/auth/login", {
-        email,
-        password
-      });
-
-      const token = response.data.token;
-
-      // Guardar el token para que Axios lo use
-      localStorage.setItem("token", token);
-
-      // Obtener el usuario autenticado
-      const user = await getCurrentUser();
-
-      // Guardar token y usuario en el contexto
-      login(token, user);
-
-      navigate("/dashboard");
-
+        setError("");
+        const { token } = await loginRequest(
+            email,
+            password
+        );
+        await login(token);
+        navigate("/dashboard");
     } catch (err) {
-      console.log(err);
-      alert("Login failed");
+        console.error(err);
+        setError(
+            err.response?.data?.message ??
+            "No fue posible iniciar sesión."
+        );
     }
-  };
+};
 
   return (
     <div>
@@ -53,6 +44,13 @@ export default function Login() {
       />
 
       <button onClick={handleLogin}>Login</button>
+      {
+        error && (
+          <p className="mt-4 text-sm text-red-500">
+            {error}
+          </p>
+        )
+      }
     </div>
   );
 }

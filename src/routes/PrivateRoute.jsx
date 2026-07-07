@@ -1,13 +1,19 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+import LoadingScreen from "../components/common/LoadingScreen";
 
-export default function PrivateRoute({ children }) {
+export default function PrivateRoute() {
 
-    const { token } = useAuth();
+    const { token, loading } = useAuth();
 
-    if (!token) {
-        return <Navigate to="/login" replace />;
+    if (loading) {
+        return <LoadingScreen />;
     }
 
-    return children;
+    if (!token) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
 }
