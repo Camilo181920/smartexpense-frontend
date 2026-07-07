@@ -1,13 +1,15 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard" },
   { name: "Expenses", path: "/expenses" },
-  { name: "Categories", path: "/categories" },
-  { name: "Profile", path: "/profile" },
 ];
 
 export default function Sidebar() {
+
+  const { user } = useAuth();
+
   return (
     <aside className="flex h-screen w-64 flex-col bg-slate-900 text-white shadow-lg">
 
@@ -19,7 +21,10 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 p-4">
+      <nav
+        aria-label="Main navigation"
+        className="flex-1 space-y-2 p-4"
+      >
         {menuItems.map((item) => (
           <NavLink
             key={item.path}
@@ -39,14 +44,17 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="border-t border-slate-800 p-4">
+
         <p className="text-sm text-slate-400">
           Logged in as
         </p>
 
         <p className="font-medium">
-          Daniel
+          {user?.firstName} {user?.lastName}
         </p>
+
       </div>
+
     </aside>
   );
 }
