@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import SummaryCard from "../components/dashboard/SummaryCard";
 import ExpenseCategoryChart from "../components/dashboard/ExpenseCategoryChart";
 import ExpenseTable from "../components/expenses/ExpenseTable";
 import ExpenseModal from "../components/expenses/ExpenseModal";
 import { useAuth } from "../context/AuthContext";
+import LoadingScreen from "../components/common/LoadingScreen";
 
 import {
     getSummary,
@@ -14,36 +15,46 @@ import {
 
 export default function Dashboard() {
 
+    const { token } = useAuth();
     const [total, setTotal] = useState(0);
     const [expenses, setExpenses] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedExpense, setSelectedExpense] = useState(null);
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
-    const token = localStorage.getItem("token");
 
-    const loadDashboard = async () => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    const loadDashboard = useCallback(async () => {
         try {
+            setLoading(true);
+            setError("");
             const [summary, expensesData, categoryData] = await Promise.all([
                 getSummary(),
                 getExpenses(),
                 getExpensesByCategory()
             ]);
-
             setTotal(summary ?? 0);
             setExpenses(expensesData);
             setCategories(categoryData);
-
         } catch (error) {
             console.error(error);
+            setError(
+                "No se pudieron cargar los datos del dashboard."
+            );
+        } finally {
+            setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        if (!token) return;
-
+        if (!token) {
+            setLoading(false);
+            return;
+        }
         loadDashboard();
-    }, []);
+    }, [token, loadDashboard]);
 
     const handleUpdated = () => {
         loadDashboard();
@@ -69,6 +80,18 @@ export default function Dashboard() {
         return matchSearch && matchCategory;
     });
 
+    if (loading) {
+        return <LoadingScreen />;
+    }
+
+    if (error) {
+        return (
+            <div className="rounded-lg bg-red-100 p-4 text-red-700">
+                {error}
+            </div>
+        );
+    }
+    
     return (
         <>
             <div className="flex justify-between items-center mb-8">

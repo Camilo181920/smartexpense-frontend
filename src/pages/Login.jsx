@@ -21,9 +21,14 @@ export default function Login() {
         navigate("/dashboard");
     } catch (err) {
         console.error(err);
+        if (!err.response) {
+            setError("No hay conexión con el servidor.");
+            return;
+        }
+
         setError(
-            err.response?.data?.message ??
-            "No fue posible iniciar sesión."
+            err.response.data.message ??
+            "Credenciales incorrectas."
         );
     }
 };
