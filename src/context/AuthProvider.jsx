@@ -1,15 +1,12 @@
-import { 
-    createContext, 
-    useCallback, 
-    useContext, 
-    useEffect, 
-    useMemo, 
-    useState 
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
 } from "react";
-import { getCurrentUser } from "../services/userService";
-import api from "../api/axiosConfig";
 
-const AuthContext = createContext(null);
+import { AuthContext } from "./AuthContext";
+import { getCurrentUser } from "../services/userService";
 
 export function AuthProvider({ children }) {
 
@@ -102,11 +99,4 @@ export function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
-}
-
-
-export function useAuth() {
-
-    return useContext(AuthContext);
-
 }

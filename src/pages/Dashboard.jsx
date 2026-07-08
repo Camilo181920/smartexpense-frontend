@@ -4,7 +4,7 @@ import SummaryCard from "../components/dashboard/SummaryCard";
 import ExpenseCategoryChart from "../components/dashboard/ExpenseCategoryChart";
 import ExpenseTable from "../components/expenses/ExpenseTable";
 import ExpenseModal from "../components/expenses/ExpenseModal";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import LoadingScreen from "../components/common/LoadingScreen";
 
 import {
