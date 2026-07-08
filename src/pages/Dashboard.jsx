@@ -37,7 +37,7 @@ export default function Dashboard() {
             ]);
             setTotal(summary ?? 0);
             setExpenses(expensesData);
-            setCategories(categoryData);
+            setCategories(categoryData ?? []);
         } catch (error) {
             console.error(error);
             setError(

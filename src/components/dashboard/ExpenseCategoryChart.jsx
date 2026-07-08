@@ -14,11 +14,11 @@ export default function ExpenseCategoryChart({ categories }) {
   const hasData = categories?.length > 0;
 
   const data = {
-    labels: categories?.map((item) => item[0]) ?? [],
+    labels: categories.map(item => item.category),
 
     datasets: [
       {
-        data: categories?.map((item) => item[1]) ?? [],
+        data: categories.map(item => item.total),
 
         backgroundColor: [
           "#2563EB", // Blue

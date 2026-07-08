@@ -57,7 +57,7 @@ export default function Login() {
       const user = await getCurrentUser();
 
 
-      login(token, user);
+      await login(token, user);
 
 
       navigate("/dashboard");
